@@ -1,4 +1,4 @@
-FROM c4tech/php:base
+FROM c4tech/php:5-base
 
 USER www-data
 
