@@ -24,26 +24,21 @@ RUN apt-get update && \
   && rm -r /var/lib/apt/lists/*
 
 # PHP Extensions
-RUN docker-php-ext-install mcrypt zip bz2 mbstring \
-  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-  && docker-php-ext-install gd
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+  && docker-php-ext-install gd mcrypt zip bz2 mbstring
 
 # Memory Limit
 RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini
 
 # Set up the application directory
-RUN mkdir -p /usr/src/app
-RUN ln -s /usr/src/app /app
-VOLUME ["/usr/src/app"]
+RUN mkdir -p /usr/src/app && \
+    ln -s /usr/src/app /app
 WORKDIR /usr/src/app
 
 # Onbuild Install
-ONBUILD RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini
+ONBUILD RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini &&
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ONBUILD RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-ONBUILD COPY composer.* /usr/src/app/
-
+ONBUILD COPY composer.json /usr/src/app/
 ONBUILD RUN hhvm /usr/local/bin/composer --ansi install
-
 ONBUILD COPY . /usr/src/app/
