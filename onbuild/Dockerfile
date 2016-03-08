@@ -36,7 +36,7 @@ RUN mkdir -p /usr/src/app && \
 WORKDIR /usr/src/app
 
 # Onbuild Install
-ONBUILD RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini &&
+ONBUILD RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 ONBUILD COPY composer.json /usr/src/app/
