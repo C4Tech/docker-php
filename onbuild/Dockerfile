@@ -39,6 +39,6 @@ WORKDIR /usr/src/app
 ONBUILD RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > $PHP_INI_DIR/conf.d/date_timezone.ini && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ONBUILD COPY composer.json /usr/src/app/
-ONBUILD RUN hhvm /usr/local/bin/composer --ansi install
+ONBUILD COPY composer.* /usr/src/app/
+ONBUILD RUN hhvm /usr/local/bin/composer --ansi --no-dev install
 ONBUILD COPY . /usr/src/app/
